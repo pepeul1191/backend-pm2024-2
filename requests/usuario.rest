@@ -1,0 +1,14 @@
+@baseUrl = http://192.168.1.22:4567/
+
+#############################################
+
+POST {{baseUrl}}usuario/validar 
+content-type: application/json
+
+{
+  "usuario": "jovaldiv",
+  "contrasenia": "123"
+}
+
+#############################################
+
