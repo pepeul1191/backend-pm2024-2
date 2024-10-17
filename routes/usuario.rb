@@ -14,20 +14,17 @@ post '/usuario/validar' do
     # SELECT id, member_id FROM usuarios
     # WHERE usuario = '#{usuario}' AND contrasenia = '#{contrasenia}';
     record = Usuario.where(usuario: usuario, contrasenia: contrasenia).select(:id).first
-    puts '1 ++++++++++++++++++++++++++'
-    puts record
-    puts '2 ++++++++++++++++++++++++++'
     # result set
     usuario_id = nil
     member_id = nil
     data = ''
-    message = 'Usuario no encontrado'
+    message = ''
     if record then
       resp = UsuarioLogueado.where(usuario_id: record.id).first.to_json
       status = 200
     else
       status = 404
-      resp = 'Usuario no encontrado'
+      resp = 'Usuario y/o contraseña no válidos'
     end
   rescue Sequel::DatabaseError => e
     resp = 'Error al acceder a la base de datos'
@@ -45,27 +42,26 @@ post '/usuario/cambiar-contrasenia' do
   # params
   status = 500
   resp = ''
-  dni = params[:dni]
-  email = params[:email]
+  correo = params[:correo]
   # db access
   begin
+    chars = [('a'..'z'), ('A'..'Z'), ('0'..'9')].map(&:to_a).flatten
+    new_password = (0...3).map { chars[rand(chars.length)] }.join
     query = <<-STRING
-      SELECT U.id AS user_id FROM members M
-      INNER JOIN users U ON M.id = U.member_id
-      WHERE M.dni='#{dni}' AND M.email = '#{email}';
+      UPDATE usuarios SET contrasenia = '#{new_password}' WHERE id = (
+        SELECT usuario_id FROM vw_usuarios_logeados 
+        WHERE correo = '#{correo}'
+      );
     STRING
-    record = DB[query].first
-    if record then
-      chars = [('a'..'z'), ('A'..'Z'), ('0'..'9')].map(&:to_a).flatten
-      new_password = (0...15).map { chars[rand(chars.length)] }.join
-      # UPDATE users SET password='#{new_password}' 
-      # WHERE id = #{record[:user_id]};
-      User[record[:user_id]].update(password: new_password)
+    puts query
+    records = DB[query].update
+    puts records
+    if records > 0 then
       resp = 'Contraseña actualizada'
       status = 200
     else
       status = 404
-      resp = 'Usuario no encontrado'
+      resp = 'Correo no registrado'
     end
   rescue Sequel::DatabaseError => e
     # resp[:message] = 'Error al acceder a la base de datos'

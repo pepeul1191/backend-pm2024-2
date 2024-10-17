@@ -11,4 +11,11 @@ content-type: application/json
 }
 
 #############################################
+POST {{baseUrl}}usuario/cambiar-contrasenia
+Content-Type: application/x-www-form-urlencoded
 
+correo=45954@aloe.ulima.edu.pe
+
+#############################################
+GET {{baseUrl}}seccion/alumno
+  ?alumno_d=1
