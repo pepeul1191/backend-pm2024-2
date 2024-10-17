@@ -86,7 +86,9 @@ CREATE VIEW vw_usuarios_logeados AS
     codigo,
     imagen,
     correo,
-    'alumno' AS tipo FROM usuarios U INNER JOIN alumnos A ON A.usuario_id = U.id 
+	A.id AS persona_id,
+    'alumno' AS tipo 
+	FROM usuarios U INNER JOIN alumnos A ON A.usuario_id = U.id
   UNION 
   SELECT 
     U.id AS usuario_id, 
@@ -95,4 +97,6 @@ CREATE VIEW vw_usuarios_logeados AS
     codigo,
     imagen,
     correo,
-    'docente' AS tipo FROM usuarios U INNER JOIN docentes D ON D.usuario_id = U.id;
+	D.id AS persona_id,
+    'docente' AS tipo 
+	FROM usuarios U INNER JOIN docentes D ON D.usuario_id = U.id;

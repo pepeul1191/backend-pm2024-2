@@ -5,7 +5,7 @@ get '/seccion/alumno' do
     query = <<-STRING
       SELECT 
         D.id AS docente_id,
-        D.apellidos || ', ' || D.nombres AS docent_nombre,
+        D.apellidos || ', ' || D.nombres AS docente_nombre,
         C.id AS curso_id,
         C.codigo AS curso_codigo,
         C.nombre AS curso_nombre,
