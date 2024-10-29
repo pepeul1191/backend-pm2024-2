@@ -6,6 +6,12 @@ end
 class UsuarioLogueado < Sequel::Model(DB[:vw_usuarios_logeados])
 end
 
+class Alumno < Sequel::Model(DB[:alumnos])
+end
+
+class Docente < Sequel::Model(DB[:docentes])
+end
+
 '''
 class Level < Sequel::Model(DB[:levels])
 end

@@ -76,3 +76,68 @@ post '/usuario/cambiar-contrasenia' do
   status status
   resp
 end
+
+
+post '/usuario/crear-usuario' do
+  # INSERT INTO alumnos (nombres, codigo, imagen, correo) VALUES ('Pepe Valdivia', 20051191, 'alumnos/pp.png', '20051191@aloe.ulima.edu.pe');
+  # INSERT INTO docentes (nombres, apellidos, codigo, imagen, correo) VALUES ('Chicle', 'Pikerton', 63733, 'alumnos/chicle.png', 'chicle@ulima.edu.pe');
+  # params
+  status = 500
+  resp = ''
+  correo = params[:correo]
+  usuario = params[:usuario]
+  contrasenia = params[:contrasenia]
+  # db access
+  begin
+    usuarios = Usuario.where(usuario: usuario).count
+    if usuarios == 0 then
+      docente = Docente.where(correo: correo).first
+      if docente then
+        if docente.usuario_id == nil then
+          usuario = Usuario.new(usuario: usuario, contrasenia: contrasenia)
+          usuario.save
+          docente.update(usuario_id: usuario.id)
+          resp = 'Se le ha enviado un correo con su link de activación'
+          status = 200
+        else
+          resp = 'Alumno ya tiene registrado un usuario'
+          status = 500
+        end
+      else
+        alumno = Alumno.where(correo: correo).first
+        puts alumno.to_json
+        if alumno then
+          puts 'iffffffffffffffffffffffffff'
+          if alumno.usuario_id == nil then
+            usuario = Usuario.new(usuario: usuario, contrasenia: contrasenia)
+            usuario.save
+            alumno.update(usuario_id: usuario.id)
+            resp = 'Se le ha enviado un correo con su link de activación'
+            status = 200
+          else
+            puts 'elseseeeeeeeeee'
+            resp = 'Alumno ya tiene registrado un usuario'
+            status = 500
+          end
+        else
+          resp = 'Correo no registrado'
+          status = 404
+        end
+      end
+    else
+      status = 500
+      resp = 'Usuario ya en uso'
+    end
+  rescue Sequel::DatabaseError => e
+    # resp[:message] = 'Error al acceder a la base de datos'
+    # resp[:data] = e.message
+    resp = e.message
+  rescue StandardError => e
+    # resp[:message] = 'Error al acceder a la base de datos'
+    # resp[:data] = e.message
+    resp = e.message
+  end
+  # response
+  status status
+  resp
+end
