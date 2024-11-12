@@ -1,4 +1,6 @@
 require 'json'
+require 'fileutils'
+require 'securerandom'
 
 post '/usuario/validar' do
   # params (json)
@@ -77,6 +79,44 @@ post '/usuario/cambiar-contrasenia' do
   resp
 end
 
+
+post '/usuario/imagen' do
+  status = 500
+  resp = ''
+  # db access
+  begin
+    if params[:file] || params[:user_id]
+      # Obtener el archivo cargado
+      uploaded_file = params[:file][:tempfile]
+      original_filename = params[:file][:filename]
+      usuario_id = params[:user_id]
+      file_extension = File.extname(original_filename)
+      # Generar un nombre aleatorio de 20 caracteres (mayúsculas, minúsculas y números)
+      random_name = SecureRandom.alphanumeric(20)  # Genera una cadena aleatoria de 20 caracteres
+      # Definir la nueva ruta donde se guardará el archivo
+      destination = "./public/uploads/#{random_name}#{file_extension}"
+      Alumno.where(usuario_id: usuario_id).update(imagen: destination.slice(9..-1))
+      Docente.where(usuario_id: usuario_id).update(imagen: destination.slice(9..-1))
+      # Guardar el archivo en el directorio "uploads" con el nuevo nombre
+      FileUtils.copy_file(uploaded_file.path, destination)
+      "Archivo subido con éxito como: #{random_name}"
+    else
+      status = 500
+      resp = 'No ha subido un archivo y/o no hay el usuario'
+    end
+  rescue Sequel::DatabaseError => e
+    # resp[:message] = 'Error al acceder a la base de datos'
+    # resp[:data] = e.message
+    resp = e.message
+  rescue StandardError => e
+    # resp[:message] = 'Error al acceder a la base de datos'
+    # resp[:data] = e.message
+    resp = e.message
+  end
+  # response
+  status status
+  resp
+end
 
 post '/usuario/crear-usuario' do
   # INSERT INTO alumnos (nombres, codigo, imagen, correo) VALUES ('Pepe Valdivia', 20051191, 'alumnos/pp.png', '20051191@aloe.ulima.edu.pe');

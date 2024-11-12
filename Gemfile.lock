@@ -3,6 +3,7 @@ GEM
   specs:
     base64 (0.2.0)
     bigdecimal (3.1.8)
+    ffi (1.16.3)
     ffi (1.16.3-x64-mingw-ucrt)
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -33,11 +34,13 @@ GEM
       rack-session (>= 2.0.0, < 3)
       tilt (~> 2.0)
     sqlite3 (2.0.2-x64-mingw-ucrt)
+    sqlite3 (2.0.2-x86_64-linux-gnu)
     tilt (2.3.0)
     webrick (1.8.1)
 
 PLATFORMS
   x64-mingw-ucrt
+  x86_64-linux
 
 DEPENDENCIES
   rackup
