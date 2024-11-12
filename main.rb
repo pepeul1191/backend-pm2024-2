@@ -7,7 +7,7 @@ set :views, File.dirname(__FILE__) + '/views'
 set :protection, except: :frame_options
 set :bind, '192.168.1.22'
 set :port, 4567
-FileUtils.mkdir_p('public/uploads')
+FileUtils.mkdir_p('public/uploads') 
 # db
 require_relative 'configs/database'
 require_relative 'configs/models'
